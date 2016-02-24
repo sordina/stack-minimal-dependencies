@@ -10,11 +10,13 @@ import Language.Dot.Syntax
 import qualified Data.Set as S
 
 main :: IO ()
-main = getContents >>= print . parseDot "-"
+main = getContents >>= print . fmap go . parseDot "-"
 
 data Node = Node deriving (Eq, Ord, Show)
-
 type Edge = (Node,Node)
+
+go :: Graph -> S.Set Node
+go ns = target_nodes (getNodes ns) (getEdges ns)
 
 getNodes :: Graph -> [Node]
 getNodes = undefined
@@ -22,7 +24,7 @@ getNodes = undefined
 getEdges :: Graph -> [Edge]
 getEdges = undefined
 
-target_nodes :: [Node] -> [(Node, Node)] -> S.Set Node
+target_nodes :: [Node] -> [Edge] -> S.Set Node
 target_nodes nodes edges = fixedpoint (rewrite (reverseMap edges)) (S.fromList nodes)
 
 rewrite :: (Node -> Maybe Node) -> S.Set Node -> S.Set Node
