@@ -26,6 +26,7 @@ executable stack-minimal-dependencies-exe
   build-depends:       base
                      , stack-minimal-dependencies
                      , language-dot
+                     , containers
   default-language:    Haskell2010
 
 test-suite stack-minimal-dependencies-test
