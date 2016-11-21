@@ -11,13 +11,13 @@ import Language.Dot.Syntax
 import qualified Data.Set as S
 
 main :: IO ()
-main = getContents >>= format . fmap go . parseDot "-"
+main = getContents >>= either print (mapM_ (putStrLn . unNode)) . fmap S.toList . fmap go . parseDot "-"
 
 test, test2, test3, test4 :: IO ()
 test     = print $ parseDot "test" testdata
-test2    = format $ fmap go $ parseDot "test2" testdata
-test3    = format $ fmap getGraphNodes $ parseDot "test2" testdata
-test4    = format $ fmap getGraphEdges $ parseDot "test2" testdata
+test2    = print $ fmap go $ parseDot "test2" testdata
+test3    = print $ fmap getGraphNodes $ parseDot "test2" testdata
+test4    = print $ fmap getGraphEdges $ parseDot "test2" testdata
 
 testdata :: [Char]
 testdata = "digraph { a -> b; a -> c; d -> e; }"
@@ -25,8 +25,8 @@ testdata = "digraph { a -> b; a -> c; d -> e; }"
 data Node = Node String deriving (Eq, Ord, Show)
 type Edge = (Node,Node)
 
-format :: forall a. Show a => a -> IO ()
-format = print
+unNode :: Node -> String
+unNode (Node n) = takeWhile (/= '"') $ tail $ dropWhile (/= '"') n
 
 go :: Graph -> S.Set Node
 go ns = target_nodes (plainNodes ++ extraNodes) (getGraphEdges ns)
